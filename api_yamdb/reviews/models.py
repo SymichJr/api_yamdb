@@ -1,9 +1,30 @@
-from django.db import models
+from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
+from django.db import models
 
 from .validators import max_value_timezone_now 
 
 User = get_user_model()
+
+
+class User(AbstractUser):
+    user = "user"
+    admin = "admin"
+    moderator = "moderator"
+    users_role = [
+        (user, 'пользователь'),
+        (admin, 'администратор'),
+        (moderator, 'модератор'),
+    ]
+    bio = models.TextField(
+        'Биография',
+        blank=True,
+    )
+    role = models.CharField("role",max_length=50, choices = users_role, default=user)
+    
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
 
 
 class Category(models.Model):
