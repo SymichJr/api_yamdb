@@ -14,6 +14,7 @@ class Category(models.Model):
     )
     slug = models.SlugField(
         verbose_name='ID категории',
+        max_length=50,
         unique=True,
         db_index=True,
     )
@@ -21,6 +22,26 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
+
+    def __str__(self):
+        return self.title
+
+
+class Genre(models.Model):
+    title = models.CharField(
+        verbose_name='Название жанра',
+        max_length=256,
+    )
+    slug = models.SlugField(
+        verbose_name='ID жанра',
+        max_length=50,
+        unique=True,
+        db_index=True,
+    )
+
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
 
     def __str__(self):
         return self.title
