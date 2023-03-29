@@ -3,12 +3,15 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework import serializers
 
+from reviews.models import Category
+
 
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
         fields = ("id", "username", "email", "role", "bio", "first_name", "last_name")
+
 
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
@@ -34,3 +37,10 @@ class ReviewSerializer(serializers.ModelSerializer):
                     'Запрещенно добавлять больше одного отзыва'
                 )
         return data
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('name', 'slug')
+        model = Category
+        lookup_field = 'slug'
