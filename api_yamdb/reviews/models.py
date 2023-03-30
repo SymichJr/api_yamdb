@@ -45,6 +45,24 @@ class User(AbstractUser):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
+    def is_user(self):
+        if self.role == 'user':
+            return True
+        return False
+
+    def is_moderator(self):
+        if self.role == 'moderator':
+            return True
+        return False
+
+    def is_admin(self):
+        if self.role == 'admin':
+            return True
+        return False
+
+    class Meta:
+        ordering = ['id']
+
 
 class Genre(models.Model):
     name = models.CharField(

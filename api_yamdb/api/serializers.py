@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework import serializers
 
-from reviews.models import Category
+from reviews.models import Category, Genre
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -44,3 +44,13 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('name', 'slug')
         model = Category
         lookup_field = 'slug'
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('name', 'slug')
+        model = Genre
+        lookup_field = 'slug'
+
+
+
