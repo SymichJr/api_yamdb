@@ -13,7 +13,8 @@ from .serializers import (UserSerializer,
                           CategorySerializer,
                           GenreSerializer,
                           TitleSerializer,
-                          TitleAdminSerializer)
+                          TitleAdminSerializer,
+                          CommentSerializer)
 from .permissions import IsAdminOrReadOnlyPermission, IsAdminModeratorOwnerOrReadOnly
 from .filters import FilterTitle
 
@@ -64,7 +65,7 @@ class GenreViewSet(mixins.CreateModelMixin,
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         rating = Avg('reviews__score')
-    ).all()
+    ).all().order_by('year')
     permission_classes = (IsAdminOrReadOnlyPermission, )
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend, )
@@ -75,3 +76,16 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.request.method not in ('POST', 'PUT', 'PATCH'):
             return TitleSerializer
         return TitleAdminSerializer
+
+class CommentViewSet(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    pagination_class = PageNumberPagination
+    permission_classes = (IsAdminModeratorOwnerOrReadOnly, )
+    
+    def get_queryset(self):
+        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
+        return review.comments.all()
+    
+    def perform_create(self, serializer):
+        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
+        serializer.save(author=self.request.user, review=review)

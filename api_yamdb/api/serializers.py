@@ -1,5 +1,4 @@
-from reviews.models import User, Review, Category, Genre, Title
-from rest_framework.exceptions import ValidationError
+from reviews.models import User, Review, Category, Genre, Title, Comment
 from rest_framework.generics import get_object_or_404
 from rest_framework import serializers
 
@@ -51,7 +50,8 @@ class TitleAdminSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = ('id', 'name', 'year', 'description',
+                  'category', 'genre')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -60,8 +60,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = '__all__'
         model = Review
+        fields = ('id', 'author', 'text', 'pub_date', 'score', 'title')
         read_only_fields = ('title',)
         unique_together = ('author', 'title')
 
@@ -75,3 +75,13 @@ class ReviewSerializer(serializers.ModelSerializer):
                 'Запрещенно добавлять больше одного отзыва!'
             )
         return data
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True, slug_field='username'
+    )
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        read_only_fields = ('review',)
