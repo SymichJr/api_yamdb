@@ -12,32 +12,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ("id", "username", "email", "role", "bio", "first_name", "last_name")
 
 
-class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True,
-    )
-    title = serializers.SlugRelatedField(
-        slug_field='id',
-        read_only=True,
-    )
-
-    class Meta:
-        model = Review
-        fields = ('id', 'author', 'text', 'pub_date', 'score', 'title')
-    
-    def validate(self, data):
-        author = self.context['request'].user
-        title_id = self.context['view'].kwargs.get('title_id')
-        title = get_object_or_404(Title, pk=title_id)
-        if self.context['request'].method == 'POST':
-            if Review.objects.filter(title=title, author=author).exists():
-                raise ValidationError(
-                    'Запрещенно добавлять больше одного отзыва'
-                )
-        return data
-
-
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
@@ -78,3 +52,26 @@ class TitleAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = '__all__'
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True, slug_field='username'
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Review
+        read_only_fields = ('title',)
+        unique_together = ('author', 'title')
+
+    def validate(self, data):
+        request = self.context.get('request')
+        title_id = self.context.get('view').kwargs.get('title_id')
+        if request.method == 'POST' and Review.objects.filter(
+            author=request.user, title=title_id
+        ).exists():
+            raise serializers.ValidationError(
+                'Запрещенно добавлять больше одного отзыва!'
+            )
+        return data
