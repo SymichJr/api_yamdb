@@ -45,12 +45,15 @@ class User(AbstractUser):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
+    @property
     def is_user(self):
         return self.role == 'user'
 
+    @property
     def is_moderator(self):
         return self.role == 'moderator'
 
+    @property
     def is_admin(self):
         return self.role == 'admin'
 
@@ -165,6 +168,17 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name='reviews'
     )
+    
+    class Meta:
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
+        constraints = [
+            models.UniqueConstraint(
+            fields=('title', 'author'),
+            name='unique_review'
+            )
+        ]
+
 
 class Comment(models.Model):
     author = models.ForeignKey(
