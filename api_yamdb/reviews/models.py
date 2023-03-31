@@ -46,19 +46,13 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['email']
 
     def is_user(self):
-        if self.role == 'user':
-            return True
-        return False
+        return self.role == 'user'
 
     def is_moderator(self):
-        if self.role == 'moderator':
-            return True
-        return False
+        return self.role == 'moderator'
 
     def is_admin(self):
-        if self.role == 'admin':
-            return True
-        return False
+        return self.role == 'admin'
 
     class Meta:
         ordering = ['id']
