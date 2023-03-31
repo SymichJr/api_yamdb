@@ -135,7 +135,7 @@ class Title(models.Model):
     )
 
     class Meta():
-        ordering = ('year',)
+        ordering = ['year']
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
@@ -168,10 +168,11 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name='reviews'
     )
-    
+
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
+        ordering = ['pub_date']
         constraints = [
             models.UniqueConstraint(
             fields=('title', 'author'),
@@ -203,4 +204,4 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
-        ordering = ('pub_date',)
+        ordering = ['pub_date']
