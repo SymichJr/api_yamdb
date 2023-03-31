@@ -1,9 +1,8 @@
-from reviews.models import User, Review, Title
+from reviews.models import User, Review, Category, Genre, Title
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework import serializers
 
-from reviews.models import Category, Genre
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -53,4 +52,29 @@ class GenreSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
+class TitleSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(many=True, read_only=True)
+    rating = serializers.IntegerField(read_only=True)
 
+    class Meta:
+        fields = ('id', 'name', 'year', 'description',
+                  'rating', 'category', 'genre')
+        model = Title
+
+
+
+class TitleAdminSerializer(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Category.objects.all()
+    )
+    genre = serializers.SlugRelatedField( 
+        slug_field='slug',
+        queryset=Genre.objects.all(),
+        many=True
+    )
+
+    class Meta:
+        model = Title
+        fields = '__all__'

@@ -6,8 +6,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .views import (UserViewSet,
                     ReviewViewSet,
                     CategoryViewSet,
-                    GenreViewSet)
-                    #TitleViewSet)
+                    GenreViewSet,
+                    TitleViewSet)
 
 
 router = DefaultRouter()
@@ -16,7 +16,7 @@ router.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename="reviews")
 router.register('categories', CategoryViewSet, basename='category')
 router.register('genres', GenreViewSet, basename='genre')
-#router.register('titles', TitleViewSet, basename='titles')
+router.register('titles', TitleViewSet, basename='titles')
 
 
 
