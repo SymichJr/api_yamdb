@@ -1,15 +1,21 @@
-from reviews.views import UserViewSet
-from django.urls import include, path
-from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenObtainPairView
+
+from django.urls import path
+
+from reviews.views import (
+    SignupView,
+    UserViewSet,
+    MyTokenObtainPairView,
+    UserMeView,
+    UsersUsernameView,
+)
 
 router = DefaultRouter()
 router.register(r"users", UserViewSet)
 
-
-
 urlpatterns = [
-    path("", include(router.urls)),
-    path("auth/token/", TokenObtainPairView.as_view(), name='token_obtain_pair')
-]
+    path("users/<str:username>/", UsersUsernameView.as_view()),
+    path("users/me/", UserMeView.as_view()),
+    path("auth/token/", MyTokenObtainPairView.as_view()),
+    path("auth/signup/", SignupView.as_view()),
+] + router.urls
