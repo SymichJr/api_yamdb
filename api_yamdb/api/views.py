@@ -1,4 +1,5 @@
 
+from rest_framework.views import APIView
 from rest_framework import viewsets, mixins, status
 from django.core.mail import send_mail
 from django.contrib.auth.tokens import default_token_generator
@@ -82,13 +83,15 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     pagination_class = LimitOffsetPagination
     permission_classes = (IsAdmin, )
+    filter_backends = (SearchFilter,)
     search_fields = ('username',)
     lookup_field = 'username'
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     @action(
         detail=False,
-        methods=['get', 'patch'],
-        permission_classes=(IsAuthenticated, ),
+        methods=['GET', 'PATCH'],
+        permission_classes=(IsAuthenticated,),
         serializer_class=UserSerializer,
         url_path='me'
     )
@@ -105,6 +108,30 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         serializer = self.serializer_class(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class UsersUsernameView(APIView):
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+    def patch(self, request, username):
+        user = get_object_or_404(User, username=username)
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, username):
+        user = get_object_or_404(User, username=username)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer

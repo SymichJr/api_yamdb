@@ -9,6 +9,7 @@ from .views import (UserViewSet,
                     GenreViewSet,
                     TitleViewSet,
                     CommentViewSet,
+                    UsersUsernameView,
                     create_user,
                     get_token)
 
@@ -26,7 +27,7 @@ router.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
 
 urlpatterns = [
     path("", include(router.urls)),
-    # path("auth/token/", TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path("auth/signup/", create_user),
-    path("auth/token/", get_token)
+    path("auth/token/", get_token),
+    path("users/<username>/", UsersUsernameView.as_view()),
 ]

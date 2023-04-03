@@ -1,19 +1,40 @@
+import re
 from reviews.models import User, Review, Category, Genre, Title, Comment
 from rest_framework.generics import get_object_or_404
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
-from django.contrib.auth.validators import UnicodeUsernameValidator
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username','email')
+    username = serializers.CharField(max_length=150)
+    email = serializers.EmailField(max_length=254)
+
     def validate_username(self, data):
+        pattern = re.compile('^[\\w]{3,}')
+        if re.match(pattern=pattern, string=data) is None:
+            raise serializers.ValidationError('Имя запрещено!')       
         if data == 'me':
             raise serializers.ValidationError('имя пользователя не может быть "me"')
         return data
+    def validate(self, data):
+        username = data.get('username', None)
+        email = data.get('email', None)
 
+        if User.objects.filter(email=email, username=username).exists():
+            return data
+
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                'email занят.'
+            )
+        if User.objects.filter(username=username).exists():
+            raise serializers.ValidationError(
+                'username занят.'
+            )
+        return data
+    
+    class Meta:
+        model = User
+        fields = ('username','email')
 
 
 class ObtainTokenSerializer(serializers.Serializer):
@@ -25,7 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "role", "bio", "first_name", "last_name")
+        fields = ("username", "email", "role", "bio", "first_name", "last_name")
 
 
 class CategorySerializer(serializers.ModelSerializer):
