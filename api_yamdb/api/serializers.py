@@ -1,7 +1,24 @@
 from reviews.models import User, Review, Category, Genre, Title, Comment
 from rest_framework.generics import get_object_or_404
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth.validators import UnicodeUsernameValidator
 
+
+class CreateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username','email')
+    def validate_username(self, data):
+        if data == 'me':
+            raise serializers.ValidationError('имя пользователя не может быть "me"')
+        return data
+
+
+
+class ObtainTokenSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    confirmation_code = serializers.CharField()
 
 
 class UserSerializer(serializers.ModelSerializer):

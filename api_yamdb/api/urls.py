@@ -8,7 +8,9 @@ from .views import (UserViewSet,
                     CategoryViewSet,
                     GenreViewSet,
                     TitleViewSet,
-                    CommentViewSet)
+                    CommentViewSet,
+                    create_user,
+                    get_token)
 
 
 router = DefaultRouter()
@@ -24,5 +26,7 @@ router.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("auth/token/", TokenObtainPairView.as_view(), name='token_obtain_pair')
+    # path("auth/token/", TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path("auth/signup/", create_user),
+    path("auth/token/", get_token)
 ]
