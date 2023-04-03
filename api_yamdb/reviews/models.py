@@ -14,7 +14,6 @@ class User(AbstractUser):
         (ADMIN, 'администратор'),
         (MODERATOR, 'модератор'),
     )
-
     first_name = models.TextField(
         'Имя',
         blank=True,
@@ -44,6 +43,8 @@ class User(AbstractUser):
     
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
+    UNIQUE_FIELDS = ['username']
+    unique_together = ('username', 'email')
 
     @property
     def is_user(self):
