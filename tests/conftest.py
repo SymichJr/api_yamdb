@@ -1,7 +1,7 @@
+from django.utils.version import get_version
+
 import os
 import sys
-
-from django.utils.version import get_version
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
