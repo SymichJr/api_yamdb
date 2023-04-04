@@ -55,9 +55,7 @@ def create_user(request):
     send_mail(
         subject,
         message,
-        # Если убрать этот параметр выходит TypeError 
-        # отсутсвия позиционного аргумента from_email
-        settings.DEFAULT_FROM_EMAIL,
+        None,
         [email],
         fail_silently=False,
     )
