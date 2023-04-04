@@ -1,9 +1,3 @@
-Установитье зависимости из файла requirements.txt
-
-```sh
-pip install requirements.txt
-```
-
 # Yamdb
 API_yamdb - это API интерфейс предназначеный для развития функционала сайта.
 
