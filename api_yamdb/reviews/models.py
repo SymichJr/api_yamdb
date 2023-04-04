@@ -30,7 +30,6 @@ class User(AbstractUser):
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["email"]
     UNIQUE_FIELDS = ["username"]
-    unique_together = ("username", "email")
 
     @property
     def is_user(self):
@@ -42,10 +41,15 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == "admin"
+        return self.role == "admin" or self.role == "superuser"
 
     class Meta:
         ordering = ["id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["username", "email"], name="unique_username_email"
+            )
+        ]
 
 
 class Genre(models.Model):
