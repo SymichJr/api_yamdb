@@ -50,10 +50,12 @@ def create_user(request):
         username=username,
     )
     confirmation_code = default_token_generator.make_token(user)
-
+    subject = "Код подтверждения для получения токена"
+    message = f"Ваш код подтверждения: {confirmation_code}"
     send_mail(
-        "Код подтверждения для получения токена",
-        f"Ваш код подтверждения: {confirmation_code}",
+        subject,
+        message,
+        # Если убрать этот параметр выходит TypeError отсутсвия позиционного аргумента from_email
         settings.DEFAULT_FROM_EMAIL,
         [email],
         fail_silently=False,
