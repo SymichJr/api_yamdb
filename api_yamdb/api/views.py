@@ -49,13 +49,12 @@ def create_user(request):
         email=email,
         username=username,
     )
-    sending_email = settings.EMAIL
     confirmation_code = default_token_generator.make_token(user)
 
     send_mail(
         "Код подтверждения для получения токена",
         f"Ваш код подтверждения: {confirmation_code}",
-        sending_email,
+        settings.DEFAULT_FROM_EMAIL,
         [email],
         fail_silently=False,
     )
